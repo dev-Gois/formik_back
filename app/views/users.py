@@ -1,7 +1,9 @@
-from app import db
+from app import db, app
+import datetime
 from werkzeug.security import generate_password_hash
 from flask import jsonify, request
 from ..models.users import Users, user_schema, users_schema
+from jwt import encode
 
 def post_user():
     username = request.json['username']
@@ -11,7 +13,16 @@ def post_user():
         db.session.add(new_user)
         db.session.commit()
         result = user_schema.dump(new_user)
-        return jsonify({'message': 'User created!', 'data': result})
+        token = encode(
+        {
+            'id': new_user.id,
+            'username': new_user.username,
+            'exp': datetime.datetime.now() + datetime.timedelta(days=7)
+        },
+            app.config['SECRET_KEY'],
+            algorithm='HS256'
+        )   
+        return jsonify({'message': 'User created!', 'data': result, 'token': token, 'exp': datetime.datetime.now() + datetime.timedelta(days=7)})
     except Exception as e:
         return jsonify({'message': str(e)})
 

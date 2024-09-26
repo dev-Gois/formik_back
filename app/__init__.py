@@ -4,10 +4,11 @@ from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 app.config.from_object('config')
+
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-from app.models import users
+from app.models import users 
 from app.routes import users_routes
 from app.models import forms
 from app.models import form_fields
