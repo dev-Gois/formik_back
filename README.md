@@ -14,14 +14,14 @@
    ```python
    pip install -r requirements.txt
    ```
-3. Crie um arquivo `.env` e use o env.example como referência para configurá-lo
-
-4. Rode o seguinte comando para criar as tabelas no banco:
+3. Crie um banco de dados para conter os dados da aplicação (de preferência utilize o MySQL)
+4. Crie um arquivo `.env` e use o env.example como referência para configurá-lo
+5. Rode o seguinte comando para criar as tabelas no banco:
    ```python
    python setup_database.py
    ```
-5. Inicie o servidor:
+6. Inicie o servidor:
    ```python
    python run.py
    ```
-6. Agora só utilizar! 😊
+7. Agora só utilizar! 😊
