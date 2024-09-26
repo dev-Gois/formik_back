@@ -9,6 +9,8 @@ def post_user():
     username = request.json['username']
     password = generate_password_hash(request.json['password'])
     new_user = Users(username, password)
+    if user_by_username(username):
+        return jsonify({'message': 'User already exists!'}), 400
     try:
         db.session.add(new_user)
         db.session.commit()

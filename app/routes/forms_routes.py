@@ -5,17 +5,18 @@ from ..views.helpers import token_required
 from flask_cors import cross_origin
 
 @app.route('/forms', methods=['POST', 'GET'])
-@token_required
 @cross_origin()
+@token_required
 def forms(current_user):
+    print(current_user)
     if request.method == 'POST':
         return post_form(current_user.id)
     else:
         return get_forms()
     
 @app.route('/forms/<form_id>', methods=['GET', 'PUT', 'DELETE'])
-@token_required
 @cross_origin()
+@token_required
 def form(form_id):
     if request.method == 'GET':
         return get_form(form_id)
@@ -25,8 +26,8 @@ def form(form_id):
         return delete_form(form_id)
     
 @app.route('/users/<user_id>/forms', methods=['GET'])
-@token_required
 @cross_origin()
+@token_required
 def user_forms(user_id):
     return get_user_forms(user_id)
 
