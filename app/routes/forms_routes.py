@@ -8,7 +8,6 @@ from flask_cors import cross_origin
 @cross_origin()
 @token_required
 def forms(current_user):
-    print(current_user)
     if request.method == 'POST':
         return post_form(current_user.id)
     else:
@@ -17,12 +16,12 @@ def forms(current_user):
 @app.route('/forms/<form_id>', methods=['GET', 'PUT', 'DELETE'])
 @cross_origin()
 @token_required
-def form(form_id):
+def form(current_user, form_id):
     if request.method == 'GET':
         return get_form(form_id)
     elif request.method == 'PUT':
         return put_form(form_id)
-    else:
+    elif request.method == 'DELETE':
         return delete_form(form_id)
     
 @app.route('/users/<user_id>/forms', methods=['GET'])

@@ -33,8 +33,9 @@ def get_forms():
 
 def get_form(form_id):
     form = Forms.query.get(form_id)
-    result = form_schema.dump(form)
-    return jsonify(result)
+    if not form:
+        return jsonify({'message': 'Form not found!'}), 404
+    return jsonify(form_schema.dump(form))
 
 def get_user_forms(user_id):
     user_forms = Forms.query.filter_by(user_id=user_id).all()
@@ -43,17 +44,29 @@ def get_user_forms(user_id):
 
 def delete_form(form_id):
     form = Forms.query.get(form_id)
-    fields = FormFields.query.filter_by(form_id=form_id).all()
-    for field in fields:
-        options = FormFieldOptions.query.filter_by(field_id=field.id).all()
-        for option in options:
-            db.session.delete(option)
-        db.session.delete(field)
-    db.session.delete(form)
-    db.session.commit()
-    return jsonify({'message': 'Form deleted!'})
+    
+    if not form:
+        return jsonify({'message': 'Form not found!'}), 404
 
-# quero atualizar o form, os fields e as options, porém, sem deletar os fields e options
+    try:
+        fields = FormFields.query.filter_by(form_id=form_id).all()
+        
+        for field in fields:
+            options = FormFieldOptions.query.filter_by(form_field_id=field.id).all()
+            for option in options:
+                db.session.delete(option)
+            db.session.delete(field)
+        
+        # Exclui o formulário
+        db.session.delete(form)
+        db.session.commit()
+        
+        return jsonify({'message': 'Form deleted!'})
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': str(e)}), 500
+
 
 def put_form(form_id):
     form = Forms.query.get(form_id)
