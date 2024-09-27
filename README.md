@@ -25,3 +25,6 @@
    python run.py
    ```
 7. Agora só utilizar! 😊
+
+# Prof Italo, leia plz
+> Ao professor Italo, infelizmente devido ao tempo não consegui entregar a feature de respostas no frontend, é isso
