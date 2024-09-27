@@ -57,7 +57,6 @@ def delete_form(form_id):
                 db.session.delete(option)
             db.session.delete(field)
         
-        # Exclui o formulário
         db.session.delete(form)
         db.session.commit()
         

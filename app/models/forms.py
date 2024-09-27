@@ -22,8 +22,6 @@ class FormsSchema(ma.Schema):
     class Meta:
         fields = ('id', 'user_id', 'title', 'description', 'fields', 'created_at')
 
-# quero que o form schema tenha os campos do form e os campos dos fields
-
 form_schema = FormsSchema()
 forms_schema = FormsSchema(many=True)
 

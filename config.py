@@ -1,4 +1,3 @@
-# importe o dotenv
 from dotenv import load_dotenv
 import os
 
