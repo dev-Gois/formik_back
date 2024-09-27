@@ -66,39 +66,38 @@ def delete_form(form_id):
         db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
-
 def put_form(form_id):
     form = Forms.query.get(form_id)
-    form.title = request.json['title']
-    form.description = request.json['description']
+    if not form:
+        return jsonify({'message': 'Form not found'}), 404
+
+    form.title = request.json.get('title', form.title)
+    form.description = request.json.get('description', form.description)
+
+    for field in form.fields:
+        db.session.delete(field)
+    
     db.session.commit()
-    fields = request.json['fields']
+
+    fields = request.json.get('fields', [])
+    
     for field in fields:
-        if 'id' in field:
-            field_to_update = FormFields.query.get(field['id'])
-            field_to_update.name = field['name']
-            field_to_update.type = field['type']
-            field_to_update.required = field['required']
-            db.session.commit()
-            if field['type'] in ['multiple_choice', 'single_choice']:
-                options = field['options']
-                for option in options:
-                    if 'id' in option:
-                        option_to_update = FormFieldOptions.query.get(option['id'])
-                        option_to_update.name = option['name']
-                        db.session.commit()
-                    else:
-                        new_option = FormFieldOptions(field_to_update.id, option['name'])
-                        db.session.add(new_option)
-                        db.session.commit()
-        else:
-            new_field = FormFields(form_id, field['name'], field['type'], field['required'])
-            db.session.add(new_field)
-            db.session.commit()
-            if field['type'] in ['multiple_choice', 'single_choice']:
-                options = field['options']
-                for option in options:
-                    new_option = FormFieldOptions(new_field.id, option['name'])
-                    db.session.add(new_option)
-                    db.session.commit()
+        new_field = FormFields(
+            form_id=form_id,
+            name=field['name'],
+            type=field['type'],
+            required=field['required']
+        )
+        db.session.add(new_field)
+
+        if field['type'] in ['multiple_choice', 'single_choice']:
+            options = field.get('options', [])
+            for option in options:
+                new_option = FormFieldOptions(
+                    form_field_id=new_field.id,
+                    name=option['name']
+                )
+                db.session.add(new_option)
+
+    db.session.commit()
     return jsonify({'message': 'Form updated!', 'form': form_schema.dump(form)})
